@@ -75,10 +75,6 @@ func NewConn(conn net.Conn, timeout time.Duration) *Conn {
 	return pConn
 }
 
-function (p *Conn) Conn() net.Conn {
-	return p.conn
-}
-
 // Read is check for the proxy protocol header when doing
 // the initial scan. If there is an error parsing the header,
 // it is returned and the socket is closed.
@@ -134,6 +130,22 @@ func (p *Conn) SetReadDeadline(t time.Time) error {
 
 func (p *Conn) SetWriteDeadline(t time.Time) error {
 	return p.conn.SetWriteDeadline(t)
+}
+
+func (p *Conn) SetKeepAlive(keepalive bool) error {
+	tcp, ok := p.conn.(*net.TCPConn)
+	if !ok {
+		return fmt.Errorf("Bad conn type: %T", p.conn)
+	}
+	return tcp.SetKeepAlive(keepalive)
+}
+
+func (p *Conn) SetKeepAlivePeriod(d time.Duration) error {
+	tcp, ok := p.conn.(*net.TCPConn)
+	if !ok {
+		return fmt.Errorf("Bad conn type: %T", p.conn)
+	}
+	return tcp.SetKeepAlivePeriod(d)
 }
 
 func (p *Conn) checkPrefix() error {
