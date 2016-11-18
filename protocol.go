@@ -75,6 +75,10 @@ func NewConn(conn net.Conn, timeout time.Duration) *Conn {
 	return pConn
 }
 
+function (p *Conn) Conn() net.Conn {
+	return p.conn
+}
+
 // Read is check for the proxy protocol header when doing
 // the initial scan. If there is an error parsing the header,
 // it is returned and the socket is closed.
